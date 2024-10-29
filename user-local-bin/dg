@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Get the home directory of the user who invoked the script
+USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+DEVILBOX_DIR="$USER_HOME/Applications/devilbox"
+
+# Check if the Devilbox directory exists
+if [ ! -d "$DEVILBOX_DIR" ]; then
+    echo "Error: Directory $DEVILBOX_DIR does not exist."
+    exit 1
+fi
+
+# Navigate to the Devilbox directory
+cd "$DEVILBOX_DIR" || exit
+
+# Prompt for the project name
+read -p "Please enter your project name: " project_name
+
+# Create the project directory
+mkdir -p "$DEVILBOX_DIR/data/www/$project_name/.devilbox"
+
+# Copy vhost-gen templates
+cp "$DEVILBOX_DIR/cfg/vhost-gen/"*.yml "$DEVILBOX_DIR/data/www/$project_name/.devilbox"
+
+# Prompt for the index folder name
+read -p "Please enter your index folder (or press Enter to skip): " index_folder
+
+# Check if the user provided an index folder name
+if [ -z "$index_folder" ]; then
+    # Default to creating the index.php in the htdocs directory
+    index_folder="htdocs"
+    mkdir -p "$DEVILBOX_DIR/data/www/$project_name/$index_folder"
+    echo "<?php echo 'Hello, $project_name!'; ?>" > "$DEVILBOX_DIR/data/www/$project_name/$index_folder/index.php"
+else
+    # Create the specified index folder
+    mkdir -p "$DEVILBOX_DIR/data/www/$project_name/htdocs/$index_folder"
+    echo "<?php echo 'Hello, $project_name!'; ?>" > "$DEVILBOX_DIR/data/www/$project_name/htdocs/$index_folder/index.php"
+fi
+
+# Add the domain to /etc/hosts
+DOMAIN_NAME="$project_name.local"
+if ! grep -q "$DOMAIN_NAME" /etc/hosts; then
+    echo "127.0.0.1 $DOMAIN_NAME" | sudo tee -a /etc/hosts > /dev/null
+    echo "Domain $DOMAIN_NAME added to /etc/hosts."
+else
+    echo "Domain $DOMAIN_NAME already exists in /etc/hosts."
+fi
+
+echo "Project $project_name created successfully."

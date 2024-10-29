@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: nwg-panel
+Version: 0.9.48
+Summary: GTK3-based panel for sway and Hyprland Wayland compositors
+Home-page: https://github.com/nwg-piotr/nwg-panel
+Author: Piotr Miller
+Author-email: nwg.piotr@gmail.com
+License: MIT
+Requires-Python: >=3.4.0
+License-File: LICENSE
+Requires-Dist: pygobject

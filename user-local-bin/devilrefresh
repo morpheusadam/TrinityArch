@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Get the home directory of the user who invoked the script
+USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+DEVILBOX_DIR="$USER_HOME/Applications/devilbox"
+
+# Check if the Devilbox directory exists
+if [ ! -d "$DEVILBOX_DIR" ]; then
+    echo "Error: Directory $DEVILBOX_DIR does not exist."
+    exit 1
+fi
+
+# Navigate to the Devilbox directory
+cd "$DEVILBOX_DIR" || exit
+
+# Run docker-compose down
+echo "Stopping Docker containers..."
+docker-compose down
+
+# Run docker-compose up -d
+echo "Starting Docker containers..."
+docker-compose up -d
+
+echo "Devilbox refreshed successfully."

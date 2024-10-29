@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Define the Devilbox directory using the current user's home directory
+DEVILBOX_DIR="/home/$USER/Applications/devilbox"
+
+# Prompt for the domain name
+read -p "Please enter your domain name: " DOMAIN_NAME
+
+# Check if the domain exists in /etc/hosts
+if grep -q "$DOMAIN_NAME" /etc/hosts; then
+    # Remove the domain from /etc/hosts
+    sudo sed -i "/$DOMAIN_NAME/d" /etc/hosts
+    echo "Domain $DOMAIN_NAME removed from /etc/hosts."
+else
+    echo "Domain $DOMAIN_NAME does not exist in /etc/hosts."
+fi
+
+# Remove the corresponding project folder
+PROJECT_FOLDER="$DEVILBOX_DIR/data/www/${DOMAIN_NAME%.local}"  # Remove the .local suffix if present
+
+if [ -d "$PROJECT_FOLDER" ]; then
+    sudo rm -rf "$PROJECT_FOLDER"
+    echo "Project folder $PROJECT_FOLDER removed."
+else
+    echo "Project folder $PROJECT_FOLDER does not exist."
+fi

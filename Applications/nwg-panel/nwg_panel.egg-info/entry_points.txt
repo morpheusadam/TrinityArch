@@ -1,0 +1,5 @@
+[gui_scripts]
+nwg-dwl-interface = nwg_panel.dwl_interface:main
+nwg-panel = nwg_panel.main:main
+nwg-panel-config = nwg_panel.config:main
+nwg-processes = nwg_panel.processes:main
